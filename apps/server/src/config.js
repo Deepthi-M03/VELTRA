@@ -29,7 +29,7 @@ export function loadConfig(overrides = {}) {
     port: Number(e.PORT || 4000),
     host: e.HOST || '127.0.0.1',
     publicUrl: e.PUBLIC_URL || `http://localhost:${e.PORT || 4000}`,
-    dbFile: e.DATABASE_FILE ? resolve(ROOT, e.DATABASE_FILE) : join(ROOT, 'data', 'veltra.db'),
+    dbFile: e.DATABASE_FILE === ':memory:' ? ':memory:' : e.DATABASE_FILE ? resolve(ROOT, e.DATABASE_FILE) : join(ROOT, 'data', 'veltra.db'),
     trustProxy: bool(e.TRUST_PROXY),
     rateLimitScale: Number(e.RATE_LIMIT_SCALE || 1),
     sessionDays: Number(e.SESSION_DAYS || 7),

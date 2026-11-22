@@ -9,3 +9,5 @@ data/outbox/
 *.log
 .DS_Store
 test-results/
+
+/:memory:*
