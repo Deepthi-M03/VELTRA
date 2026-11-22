@@ -1,0 +1,10 @@
+{
+  "name": "VELTRA",
+  "short_name": "VELTRA",
+  "description": "Intelligence Beyond the Market.",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#10090D",
+  "theme_color": "#10090D",
+  "icons": [{ "src": "/assets/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

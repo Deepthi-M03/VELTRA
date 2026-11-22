@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="VELTRA">
+  <defs>
+    <linearGradient id="vg-metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F2C9B9"/><stop offset=".45" stop-color="#D9A18F"/><stop offset="1" stop-color="#8E5A4C"/>
+    </linearGradient>
+    <linearGradient id="vg-crimson" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D0324F"/><stop offset="1" stop-color="#5C1426"/>
+    </linearGradient>
+    <radialGradient id="vg-core" cx=".5" cy=".35" r=".7">
+      <stop offset="0" stop-color="#35101D"/><stop offset="1" stop-color="#10090D"/>
+    </radialGradient>
+  </defs>
+  <!-- faceted crest -->
+  <path d="M60 4 L108 30 L108 78 L60 116 L12 78 L12 30 Z" fill="url(#vg-core)" stroke="url(#vg-metal)" stroke-width="3"/>
+  <path d="M60 14 L99 35 L99 74 L60 105 L21 74 L21 35 Z" fill="none" stroke="#D9A18F" stroke-opacity=".28" stroke-width="1"/>
+  <!-- crown points -->
+  <path d="M42 26 L48 34 L54 24 L60 32 L66 24 L72 34 L78 26" fill="none" stroke="url(#vg-metal)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- the V: two blades -->
+  <path d="M30 42 L52 42 L60 70 L68 42 L90 42 L64 96 L56 96 Z" fill="url(#vg-crimson)"/>
+  <path d="M30 42 L52 42 L60 70 L56 96 Z" fill="#F05268" fill-opacity=".22"/>
+  <!-- ascending signal through the V -->
+  <path d="M26 82 L44 70 L54 76 L74 56 L94 48" fill="none" stroke="url(#vg-metal)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="94" cy="48" r="3.6" fill="#F2C9B9"/>
+</svg>
