@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- VELTRA crest, drawn in the 108dp adaptive-icon grid (content kept inside the 66dp safe zone). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <group android:scaleX="0.6" android:scaleY="0.6" android:translateX="24" android:translateY="24">
+        <path android:fillColor="#10090D" android:strokeColor="#D9A18F" android:strokeWidth="3"
+            android:pathData="M60,4 L108,30 L108,78 L60,116 L12,78 L12,30 Z" />
+        <path android:fillColor="#00000000" android:strokeColor="#F2C9B9" android:strokeWidth="2.4"
+            android:strokeLineJoin="round" android:strokeLineCap="round"
+            android:pathData="M42,26 L48,34 L54,24 L60,32 L66,24 L72,34 L78,26" />
+        <path android:fillColor="#A51E3D" android:pathData="M30,42 L52,42 L60,70 L68,42 L90,42 L64,96 L56,96 Z" />
+        <path android:fillColor="#40F05268" android:pathData="M30,42 L52,42 L60,70 L56,96 Z" />
+        <path android:fillColor="#00000000" android:strokeColor="#F2C9B9" android:strokeWidth="3"
+            android:strokeLineJoin="round" android:strokeLineCap="round"
+            android:pathData="M26,82 L44,70 L54,76 L74,56 L94,48" />
+    </group>
+</vector>

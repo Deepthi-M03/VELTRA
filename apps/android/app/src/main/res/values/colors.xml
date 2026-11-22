@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="obsidian">#FF10090D</color>
+    <color name="burgundy">#FF35101D</color>
+    <color name="crimson">#FFA51E3D</color>
+    <color name="crimson_bright">#FFC9294B</color>
+    <color name="rose_gold">#FFD9A18F</color>
+    <color name="peach">#FFF2C9B9</color>
+    <color name="emerald">#FF28B889</color>
+    <color name="ruby">#FFF05268</color>
+    <color name="text">#FFF6E7E0</color>
+    <color name="text_2">#FFCDB3AA</color>
+</resources>

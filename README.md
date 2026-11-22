@@ -29,6 +29,7 @@ Open http://localhost:4000. The full guide is in [SETUP.md](SETUP.md).
 | `packages/ai-engine` | Findings/narrative separation, numeric guardrail, Anthropic provider |
 | `packages/payments` | Gateway abstraction: Razorpay + sandbox |
 | `packages/shared` | Constants shared by server and browser |
+| `apps/android` | Native Kotlin Android app (Android Studio project) |
 | `tests` | Unit, API integration and end-to-end browser tests |
 
 ## Key commands
@@ -45,6 +46,6 @@ Open http://localhost:4000. The full guide is in [SETUP.md](SETUP.md).
 
 ## Honest status
 
-DEMO market data, the sandbox gateway and the deterministic AI work out of the box. Live NSE/MCX data, real payments, Google sign-in, email delivery and Claude narratives each need credentials or licences. Selling recommendations to the public needs SEBI registration. The Android app is not built yet. See [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md).
+All 12 stages are implemented. DEMO market data, the sandbox gateway and the deterministic AI work out of the box. Live NSE/MCX data, real payments, Google sign-in, email delivery, Android push and Claude narratives each need credentials or licences. Selling recommendations to the public needs SEBI registration. The Android project couldn't be compiled in the build environment, so its first build happens in your Android Studio. See [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md).
 
 Docs: [SETUP](SETUP.md) · [ENVIRONMENT](ENVIRONMENT.md) · [DEPLOYMENT](DEPLOYMENT.md) · [API](API_DOCUMENTATION.md) · [DATABASE](DATABASE.md) · [TEST_REPORT](TEST_REPORT.md) · [CHANGELOG](CHANGELOG.md)

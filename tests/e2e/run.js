@@ -175,6 +175,22 @@ await step('responsive: mobile terminal and homepage', async () => {
   await mp.click('#more'); await mp.waitForTimeout(500); expect(await mp.locator('.terminal.drawer-open').count() === 1, 'drawer opens');
   await m.close();
 });
+await step('Android app bridge: push token registered, Google sign-in hidden, notification permission via native', async () => {
+  T.ctx.config.google = { clientId: 'x', clientSecret: 'y' }; // simulate Google configured
+  const a = await browser.newContext({ viewport: { width: 412, height: 915 }, isMobile: true, hasTouch: true, userAgent: 'Mozilla/5.0 (Linux; Android 14) VeltraAndroid/0.1.0' });
+  await a.addInitScript(() => { window.__permAsked = 0; window.VeltraAndroid = { appVersion: () => '0.1.0', pushEnabled: () => true, pushToken: () => 'fcm-test-token-123', notificationsAllowed: () => false, requestNotificationPermission: () => { window.__permAsked++; } }; });
+  const ap = await a.newPage(); ap.on('pageerror', (e) => errors.push(`android pageerror: ${e.message}`));
+  await ap.goto(U('/login')); await ap.waitForSelector('#f');
+  expect(await ap.locator('a[href="/api/auth/google"]').count() === 0, 'Google button hidden in app');
+  await ap.fill('#f-email', 'asha.e2e@example.com'); await ap.fill('#f-password', 'Crimson-Dynasty-2026'); await ap.click('#f button[type=submit]');
+  await ap.waitForURL('**/app'); await ap.waitForSelector('.stat-card'); await ap.waitForTimeout(800);
+  const dev = T.ctx.db.get(`SELECT * FROM push_devices WHERE token = 'fcm-test-token-123'`);
+  expect(dev && dev.platform === 'android', 'device registered on server');
+  expect(await ap.evaluate(() => window.__permAsked) >= 1, 'native permission requested');
+  await ap.screenshot({ path: join(OUT, '18-android-app.png') });
+  await a.close();
+  T.ctx.config.google = { clientId: '', clientSecret: '' };
+});
 await step('reduced-motion preference respected', async () => {
   const r = await browser.newContext({ reducedMotion: 'reduce' }); const rp = await r.newPage();
   await rp.goto(U('/')); await rp.waitForTimeout(800);

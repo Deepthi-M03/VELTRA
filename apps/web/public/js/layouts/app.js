@@ -102,6 +102,7 @@ export async function mount(root) {
     try { if (Notification.permission === 'granted' && document.hidden) new Notification(n.title, { body: n.body, icon: '/assets/logo.svg' }); } catch { /* unsupported */ }
   });
   $('#bell', root).onclick = () => openDrawer(setUnread);
+  registerAndroidPush();
   const onSubs = () => api_refreshLocks(); document.addEventListener('veltra:subs-changed', onSubs);
 
   return {
@@ -132,4 +133,14 @@ async function openDrawer(setUnread) {
     list.addEventListener('click', (e) => { if (e.target.closest('a.notif')) close(); });
   } catch (e) { render(list, html`<div class="empty">${e.message}</div>`); }
   void setSession; void pct;
+}
+
+// Inside the VELTRA Android app: register this device's FCM token with the server (once per token).
+function registerAndroidPush() {
+  const A = window.VeltraAndroid;
+  if (!A?.pushEnabled?.()) return;
+  const token = A.pushToken();
+  if (!token || store.get('push-registered') === token) return;
+  api.post('/api/push/register', { platform: 'android', token }).then(() => store.set('push-registered', token)).catch(() => {});
+  if (!A.notificationsAllowed()) A.requestNotificationPermission();
 }

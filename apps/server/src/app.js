@@ -13,6 +13,7 @@ import { AuthService } from './services/auth.js';
 import { Audit, ErrorLog, Mailer, Notifier } from './services/support.js';
 import { SubscriptionService, FeatureFlags } from './services/subscriptions.js';
 import { Intelligence } from './services/intelligence.js';
+import { FcmPusher, loadServiceAccount } from './services/push.js';
 import authRoutes, { SESSION_COOKIE } from './routes/auth.js';
 import marketRoutes from './routes/market.js';
 import userRoutes from './routes/user.js';
@@ -28,8 +29,9 @@ export async function createApp(config, { log = console, quietMail = false } = {
   migrate(db, (m) => log.info?.(m));
   const bus = new EventEmitter(); bus.setMaxListeners(10000);
   const audit = new Audit(db), errors = new ErrorLog(db, log);
-  const mailer = new Mailer(db, { dir: config.dbFile === ':memory:' ? null : join(ROOT, 'data', 'outbox'), quiet: quietMail });
-  const notifier = new Notifier(db, bus);
+  const mailer = new Mailer(db, { dir: config.dbFile === ':memory:' ? null : join(ROOT, 'data', 'outbox'), quiet: quietMail, email: config.email || {} });
+  const pusher = new FcmPusher({ db, account: loadServiceAccount(config.fcm || {}), log });
+  const notifier = new Notifier(db, bus, pusher);
   const flags = new FeatureFlags(db);
   const provider = createProvider(config.market.provider, config.market);
   const market = new MarketDataService({ db, provider, config, log });
@@ -39,7 +41,7 @@ export async function createApp(config, { log = console, quietMail = false } = {
   const auth = new AuthService({ db, config, audit, mailer });
   const intel = new Intelligence({ db, market, ai, notifier, errors, log });
   const stats = { requests: 0, errors5xx: 0, rateLimited: 0, byStatus: {} };
-  const ctx = { config, db, bus, audit, errors, mailer, notifier, flags, market, ai, gateway, subs, auth, intel, stats };
+  const ctx = { config, db, bus, audit, errors, mailer, pusher, notifier, flags, market, ai, gateway, subs, auth, intel, stats };
 
   const limiter = new RateLimiter();
   const limit = (bucket, max, windowMs) => async (req) => {

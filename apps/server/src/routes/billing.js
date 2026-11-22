@@ -43,7 +43,7 @@ export default function billingRoutes(r, { requireAuth, limit }) {
     return { receiptNo: p.receipt_no, paidAt: p.paid_at, provider: p.provider, providerPaymentId: p.provider_payment_id, orderId: p.provider_order_id,
       billedTo: { name: req.user.name, email: req.user.email }, amountPaise: p.amount_paise, currency: p.currency,
       lines: items.map((i) => ({ ...i, name: CATEGORIES.find((c) => c.id === i.category)?.name, unitPaise: PRICE_PER_DAY_PAISE, amountPaise: i.days * PRICE_PER_DAY_PAISE })),
-      note: 'GST registration details must be added here before issuing tax invoices (see PRODUCTION_READINESS.md).' };
+      ...gstBlock(ctx.config.seller, p.amount_paise) };
   });
 
   // Gateway webhook — authenticated by HMAC signature, CSRF-exempt, raw body required.
@@ -66,4 +66,16 @@ export default function billingRoutes(r, { requireAuth, limit }) {
     }, 1500).unref();
     return sim;
   });
+}
+
+// Prices are GST-inclusive. With SELLER_GSTIN configured the receipt carries tax-invoice details;
+// the CGST+SGST vs IGST split depends on the buyer's place of supply — confirm with your CA.
+export function gstBlock(seller = {}, amountPaise) {
+  if (!seller.gstin) return { seller: seller.legalName ? { name: seller.legalName, address: seller.address } : null, gst: null,
+    note: 'Receipt only — not a tax invoice. Configure SELLER_GSTIN to issue GST tax invoices.' };
+  const rate = seller.gstRate || 18;
+  const taxable = Math.round(amountPaise / (1 + rate / 100));
+  return { seller: { name: seller.legalName, address: seller.address, gstin: seller.gstin, stateCode: seller.stateCode },
+    gst: { ratePct: rate, taxablePaise: taxable, taxPaise: amountPaise - taxable, sacCode: '998399' },
+    note: 'Tax invoice. Prices inclusive of GST. CGST+SGST or IGST applies according to place of supply.' };
 }

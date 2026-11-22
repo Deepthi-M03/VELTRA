@@ -31,6 +31,13 @@ Variables are read from the process environment, then from `.env` in the project
 | `RAZORPAY_WEBHOOK_SECRET` | | ✅ | Verifies webhook HMAC |
 | `SANDBOX_PAYMENT_SECRET` | | ✅ | Signing key for the local sandbox gateway |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | | secret ✅ | Google OAuth |
+| `EMAIL_PROVIDER` | | | `resend`, `sendgrid` or `postmark` (blank = outbox only) |
+| `EMAIL_API_KEY` | | ✅ | Provider API key |
+| `EMAIL_FROM` | | | Verified sender address (required with a provider in production) |
+| `FCM_SERVICE_ACCOUNT_FILE` | | ✅ (file) | Firebase service-account JSON for Android push |
+| `FCM_PROJECT_ID` / `FCM_CLIENT_EMAIL` / `FCM_PRIVATE_KEY` | | key ✅ | Alternative to the file (for hosts that only support env vars) |
+| `SELLER_LEGAL_NAME` / `SELLER_ADDRESS` | | | Printed on receipts |
+| `SELLER_GSTIN` / `SELLER_STATE_CODE` / `GST_RATE` | / / `18` | | With GSTIN set, receipts show taxable value and GST (prices GST-inclusive) |
 
 ## Feature flags (database, set by admins)
 

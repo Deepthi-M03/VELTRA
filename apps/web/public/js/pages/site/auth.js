@@ -4,7 +4,8 @@ import { animate, EASE } from '../../lib/motion.js';
 import { formData, submitting } from '../../lib/ui.js';
 
 const strength = (pw) => { let s = 0; if (pw.length >= 10) s++; if (pw.length >= 14) s++; if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++; if (/\d/.test(pw)) s++; if (/[^A-Za-z0-9]/.test(pw)) s++; return s; };
-const google = () => (session.googleEnabled ? html`<div class="divider">OR</div><a class="btn" style="width:100%" href="/api/auth/google">Continue with Google</a>` : '');
+// Google blocks OAuth inside embedded WebViews, so the Android app offers email sign-in only.
+const google = () => (session.googleEnabled && !window.VeltraAndroid ? html`<div class="divider">OR</div><a class="btn" style="width:100%" href="/api/auth/google">Continue with Google</a>` : '');
 
 export default async function auth(root, params, query, route) {
   const safeNext = (query.next && query.next.startsWith('/') && !query.next.startsWith('//')) ? query.next : '/app';

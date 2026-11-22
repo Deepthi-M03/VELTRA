@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- app_name is defined per build type in app/build.gradle.kts -->
+    <string name="tagline">INTELLIGENCE BEYOND THE MARKET.</string>
+    <string name="offline_title">Connection lost</string>
+    <string name="offline_body">VELTRA could not reach the server. Check your internet connection and try again.</string>
+    <string name="retry">Try again</string>
+    <string name="change_server">Change server (debug)</string>
+    <string name="server_dialog_title">VELTRA server URL</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="channel_alerts">Price &amp; trade alerts</string>
+    <string name="channel_alerts_desc">Price alerts, recommendation updates and market moves</string>
+    <string name="channel_account">Account &amp; payments</string>
+    <string name="channel_account_desc">Payment confirmations and subscription expiry</string>
+    <string name="no_app_for_link">No app installed can open this link.</string>
+</resources>

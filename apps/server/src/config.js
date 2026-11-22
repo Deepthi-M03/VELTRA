@@ -64,12 +64,15 @@ export function loadConfig(overrides = {}) {
       clientId: e.GOOGLE_CLIENT_ID || '',
       clientSecret: e.GOOGLE_CLIENT_SECRET || '',
     },
-    vapidPublicKey: e.VAPID_PUBLIC_KEY || '',
+    email: { provider: e.EMAIL_PROVIDER || '', apiKey: e.EMAIL_API_KEY || '', from: e.EMAIL_FROM || '' },
+    fcm: { serviceAccountFile: e.FCM_SERVICE_ACCOUNT_FILE ? resolve(ROOT, e.FCM_SERVICE_ACCOUNT_FILE) : '', projectId: e.FCM_PROJECT_ID || '', clientEmail: e.FCM_CLIENT_EMAIL || '', privateKey: e.FCM_PRIVATE_KEY || '' },
+    seller: { legalName: e.SELLER_LEGAL_NAME || '', address: e.SELLER_ADDRESS || '', gstin: e.SELLER_GSTIN || '', stateCode: e.SELLER_STATE_CODE || '', gstRate: Number(e.GST_RATE || 18) },
     ...overrides,
   };
   if (cfg.isProd) {
     if (cfg.payments.provider === 'sandbox') throw new Error('PAYMENT_PROVIDER=sandbox is not allowed in production.');
     if (!cfg.cookieSecure) throw new Error('COOKIE_SECURE must be true in production.');
+    if (cfg.email.provider && !cfg.email.from) throw new Error('EMAIL_FROM is required when EMAIL_PROVIDER is set.');
   }
   return cfg;
 }

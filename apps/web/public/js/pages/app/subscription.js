@@ -77,10 +77,12 @@ function razorpay(co) {
 async function showReceipt(id) {
   try {
     const r = await api.get(`/api/payments/${id}/receipt`);
-    modal(html`<div id="rc"><div class="row"><img src="/assets/logo.svg" alt="" width="36"><h3 style="margin:0">Receipt</h3><span class="spacer"></span><span class="mono small">${r.receiptNo}</span></div><hr class="hr">
+    modal(html`<div id="rc"><div class="row"><img src="/assets/logo.svg" alt="" width="36"><h3 style="margin:0">${r.gst ? 'Tax invoice' : 'Receipt'}</h3><span class="spacer"></span><span class="mono small">${r.receiptNo}</span></div><hr class="hr">
       <dl class="kv"><dt>Billed to</dt><dd>${r.billedTo.name} · ${r.billedTo.email}</dd><dt>Paid</dt><dd>${ist(r.paidAt)} IST</dd><dt>Gateway</dt><dd>${r.provider}</dd><dt>Payment ID</dt><dd>${r.providerPaymentId}</dd><dt>Order ID</dt><dd>${r.orderId}</dd></dl><hr class="hr">
       ${r.lines.map((l) => html`<div class="row small"><span>${l.name} · ${l.days} day(s) × ${rupees(l.unitPaise)}</span><span class="spacer"></span><span class="num">${rupees(l.amountPaise)}</span></div>`)}<hr class="hr">
-      <div class="row"><b>Total</b><span class="spacer"></span><b class="num">${rupees(r.amountPaise)}</b></div><p class="tiny muted" style="margin-top:12px">${r.note}</p></div>
+      ${r.gst ? html`<div class="row small"><span>Taxable value</span><span class="spacer"></span><span class="num">${rupees(r.gst.taxablePaise)}</span></div><div class="row small"><span>GST @ ${r.gst.ratePct}% (included) · SAC ${r.gst.sacCode}</span><span class="spacer"></span><span class="num">${rupees(r.gst.taxPaise)}</span></div><hr class="hr">` : ''}
+      <div class="row"><b>Total</b><span class="spacer"></span><b class="num">${rupees(r.amountPaise)}</b></div>
+      ${r.seller ? html`<p class="tiny muted" style="margin-top:10px">${r.seller.name}${r.seller.address ? ` · ${r.seller.address}` : ''}${r.seller.gstin ? ` · GSTIN ${r.seller.gstin}` : ''}</p>` : ''}<p class="tiny muted" style="margin-top:12px">${r.note}</p></div>
       <div class="modal-actions"><button class="btn" id="print">${icon('journal', 'width="14" height="14"')} Print</button><button class="btn btn-primary" data-close>Close</button></div>`, { onMount: (box) => { box.querySelector('#print').onclick = () => window.print(); } });
   } catch (x) { errToast(x); }
 }

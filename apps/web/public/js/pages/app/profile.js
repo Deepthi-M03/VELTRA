@@ -28,7 +28,13 @@ export default async function profile(root) {
   $('#rv', root)?.addEventListener('click', async () => { try { await api.post('/api/auth/resend-verification'); toast('Verification email sent', '', 'ok'); } catch (x) { errToast(x); } });
   $('#logout', root).onclick = async () => { try { await api.post('/api/auth/logout'); } catch { /* ignore */ } setSession(null); window.veltraNavigate('/'); };
   $('#lo', root).onclick = async () => { await api.post('/api/profile/logout-others'); loadSessions(); toast('Other sessions signed out', '', 'ok'); };
-  $('#bn', root).onclick = async () => { try { const p = await Notification.requestPermission(); toast(p === 'granted' ? 'Browser notifications enabled' : 'Notifications not enabled', p === 'granted' ? 'You will be notified while VELTRA is open in the background.' : 'You can change this in your browser settings.'); } catch { toast('Not supported', 'This browser does not support notifications.', 'err'); } };
+  if (window.VeltraAndroid) { $('#bn', root).textContent = 'Allow app notifications'; }
+  $('#bn', root).onclick = async () => {
+    if (window.VeltraAndroid) {
+      addEventListener('veltra:android-notifications', (ev) => toast(ev.detail ? 'App notifications allowed' : 'Notifications blocked', ev.detail ? (window.VeltraAndroid.pushEnabled() ? 'Push alerts will arrive even when VELTRA is closed.' : 'Push is not configured on this server yet.') : 'Enable them in Android Settings → Apps → VELTRA.'), { once: true });
+      window.VeltraAndroid.requestNotificationPermission(); return;
+    }
+    try { const p = await Notification.requestPermission(); toast(p === 'granted' ? 'Browser notifications enabled' : 'Notifications not enabled', p === 'granted' ? 'You will be notified while VELTRA is open in the background.' : 'You can change this in your browser settings.'); } catch { toast('Not supported', 'This browser does not support notifications.', 'err'); } };
 
   async function loadSessions() {
     const { rows } = await api.get('/api/profile/sessions');

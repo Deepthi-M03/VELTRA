@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.2.0 — 22 Nov 2026 — All 12 stages
+### Added
+- **Stage 11 — Android app** (`apps/android`): Kotlin, AGP 8.7, minSdk 26 / target 35. Crimson Dynasty splash and adaptive icon, hardened WebView host for the terminal, deep links, UPI/intent payment hand-off, offline screen, pull-to-refresh, notification channels, optional Firebase Cloud Messaging (auto-enabled by `google-services.json`), and a `window.VeltraAndroid` bridge.
+- Server **Android push** via FCM HTTP v1 (service-account JWT signed with node:crypto), sent according to per-user preferences; stale tokens are removed automatically.
+- **Email delivery** via Resend, SendGrid or Postmark, with outbox status tracking.
+- **GST tax-invoice details** on receipts when a GSTIN is configured.
+- Admin health panels for push and email; web-app Android integration (token registration, native permission prompt, Google sign-in hidden in-app).
+- 5 new unit tests and 1 new browser journey.
+
+
 ## 0.1.0 — 22 Nov 2026 — Foundation release
 
 ### Architecture decisions

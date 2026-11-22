@@ -30,6 +30,8 @@ export default function adminRoutes(r, { requireAdmin }) {
       webhooks24h: ctx.db.get('SELECT COUNT(*) c FROM payment_webhooks WHERE received_at > ?', new Date(Date.now() - 86400000).toISOString()).c,
       invalidWebhookSignatures: ctx.db.get('SELECT COUNT(*) c FROM payment_webhooks WHERE signature_valid = 0').c },
     scanner: { lastScanAt: ctx.intel.lastScanAt },
+    push: { ...ctx.pusher.health, androidDevices: ctx.db.get(`SELECT COUNT(*) c FROM push_devices WHERE platform = 'android'`).c },
+    email: ctx.mailer.health,
     server: { uptimeSec: Math.round(process.uptime()), node: process.version, memoryMb: Math.round(process.memoryUsage().rss / 1048576), env: ctx.config.env },
     api: { requests: ctx.stats.requests, errors5xx: ctx.stats.errors5xx, rateLimited: ctx.stats.rateLimited, byStatus: ctx.stats.byStatus },
   }));

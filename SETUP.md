@@ -111,4 +111,18 @@ In Google Cloud Console, create an OAuth client of type *Web application*. Add t
 
 ### Email delivery
 
-No provider is connected yet. Messages are queued in the `email_outbox` table and `data\outbox\emails.log`. To send real email, implement delivery in `Mailer.send()` (`apps/server/src/services/support.js`) using your provider's HTTPS API, for example Amazon SES, Postmark or Resend.
+Without a provider, messages are only queued in `data\outbox\emails.log`. To deliver real email, create an account with Resend, SendGrid or Postmark, verify your sender domain, and set:
+```
+EMAIL_PROVIDER=resend
+EMAIL_API_KEY=...
+EMAIL_FROM=noreply@your-domain.com
+```
+Delivery status shows in *Administration → Support inbox → Email outbox* and in *System health*.
+
+### GST tax invoices
+
+Set `SELLER_LEGAL_NAME`, `SELLER_ADDRESS`, `SELLER_GSTIN` and `SELLER_STATE_CODE`. Receipts then become tax invoices showing the taxable value and GST included in the ₹50/day price. Confirm the CGST+SGST/IGST treatment and SAC code with your chartered accountant.
+
+### Android app & push notifications
+
+See [apps/android/README.md](apps/android/README.md) for step-by-step Android Studio instructions (emulator, real phone, release build, Firebase push).
