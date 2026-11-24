@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { verifyNumbers, buildFindings, deterministicNarrative } from '../../packages/ai-engine/index.js';
-import { RazorpayGateway, SandboxGateway, hmacHex } from '../../packages/payments/index.js';
-import { quote } from '../../apps/server/src/services/subscriptions.js';
+import { RazorpayGateway, SandboxGateway, DisabledGateway, createGateway, hmacHex } from '../../packages/payments/index.js';
+import { quote, SubscriptionService } from '../../apps/server/src/services/subscriptions.js';
 import { hashPassword, verifyPassword, passwordProblems } from '../../apps/server/src/services/auth.js';
 
 const inputs = { symbol: 'TEST', dataStatus: 'DEMO', indicators: { close: 1523.4, rsi14: 61.2, ema20: 1500.1, ema50: 1480.5, vwap: 1519.9, volumeRatio: 1.42, macdHist: 0.8, macdHistPrev: 0.5 },
@@ -44,7 +44,7 @@ test('Sandbox gateway: failed outcome yields no signature', async () => {
   assert.equal((await g.confirmPayment({ orderId: o.orderId, paymentId: ok.paymentId, amountPaise: 1 })).ok, false);
 });
 
-test('Pricing: ₹50/day/category, multi-category, limits enforced', () => {
+test('Pricing: â‚¹50/day/category, multi-category, limits enforced', () => {
   const q = quote([{ category: 'equity', days: 1 }, { category: 'options', days: 7 }]);
   assert.equal(q.totalPaise, 5000 + 35000);
   assert.throws(() => quote([{ category: 'equity', days: 1 }, { category: 'equity', days: 2 }]), /Duplicate/);
@@ -60,4 +60,32 @@ test('Password hashing and policy', async () => {
   assert.ok(passwordProblems('short1').length);
   assert.ok(passwordProblems('alllettersnodigits').length);
   assert.equal(passwordProblems('Crimson-Dynasty-2026').length, 0);
+});
+
+test('Disabled gateway blocks checkout and webhook processing', async () => {
+  const g = createGateway({ provider: 'disabled' });
+  assert.ok(g instanceof DisabledGateway);
+  assert.equal(g.name, 'disabled');
+  assert.equal(g.configured, false);
+  assert.equal(g.isSandbox, false);
+  assert.equal(g.disabled, true);
+  await assert.rejects(g.createOrder({ amountPaise: 5000 }), /disabled/i);
+  assert.equal(g.verifyCheckoutSignature({}), false);
+  assert.equal((await g.confirmPayment({})).ok, false);
+  assert.equal(g.verifyWebhook('{}', 'signature'), false);
+
+  const service = new SubscriptionService({
+    db: null,
+    gateway: g,
+    audit: null,
+    notifier: null,
+    flags: { get() { throw new Error('Feature flags must not enable disabled payments'); } },
+  });
+
+  assert.deepEqual(service.checkoutAllowed(), {
+    ok: false,
+    reason: 'Payments are not configured for this demo.',
+  });
+  assert.equal((await service.createOrder({ id: 1 }, [])).code, 'CHECKOUT_DISABLED');
+  assert.deepEqual(service.handleWebhook('{}', ''), { status: 404 });
 });

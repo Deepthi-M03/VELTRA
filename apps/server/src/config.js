@@ -1,5 +1,5 @@
 // Configuration loader. Reads ./.env (if present) without overriding real environment variables.
-// Secrets are only ever read from the environment — never from the database or the frontend.
+// Secrets are only ever read from the environment â€” never from the database or the frontend.
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -54,7 +54,7 @@ export function loadConfig(overrides = {}) {
       ratePerMinute: Number(e.AI_RATE_PER_MINUTE || 30),
     },
     payments: {
-      provider: e.PAYMENT_PROVIDER || 'sandbox',      // sandbox | razorpay
+      provider: e.PAYMENT_PROVIDER || 'sandbox',      // disabled | sandbox | razorpay
       razorpayKeyId: e.RAZORPAY_KEY_ID || '',
       razorpayKeySecret: e.RAZORPAY_KEY_SECRET || '',
       razorpayWebhookSecret: e.RAZORPAY_WEBHOOK_SECRET || '',
@@ -71,6 +71,10 @@ export function loadConfig(overrides = {}) {
   };
   if (cfg.isProd) {
     if (cfg.payments.provider === 'sandbox') throw new Error('PAYMENT_PROVIDER=sandbox is not allowed in production.');
+    if (!['disabled', 'razorpay'].includes(cfg.payments.provider)) throw new Error('Production PAYMENT_PROVIDER must be disabled or razorpay.');
+    if (cfg.payments.provider === 'razorpay' && (!cfg.payments.razorpayKeyId || !cfg.payments.razorpayKeySecret)) {
+      throw new Error('Razorpay production requires RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.');
+    }
     if (!cfg.cookieSecure) throw new Error('COOKIE_SECURE must be true in production.');
     if (cfg.email.provider && !cfg.email.from) throw new Error('EMAIL_FROM is required when EMAIL_PROVIDER is set.');
   }

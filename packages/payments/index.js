@@ -49,7 +49,7 @@ export class RazorpayGateway {
 }
 
 // Sandbox gateway: mirrors Razorpay's signature model exactly, with a local "hosted checkout" page that
-// plays the gateway's role. It lets the whole flow (order → pay/fail → server verification → webhook)
+// plays the gateway's role. It lets the whole flow (order â†’ pay/fail â†’ server verification â†’ webhook)
 // be tested end-to-end without credentials. Disabled in production by config.
 export class SandboxGateway {
   constructor({ secret }) { this.secret = secret; this.orders = new Map(); }
@@ -61,7 +61,7 @@ export class SandboxGateway {
     this.orders.set(orderId, { amountPaise });
     return { orderId, amountPaise, checkout: { provider: 'sandbox', orderId, amount: amountPaise, currency: 'INR', url: `/sandbox-checkout?order=${orderId}` } };
   }
-  // Called by the sandbox checkout page (acting as the gateway) — returns what a gateway would hand the browser.
+  // Called by the sandbox checkout page (acting as the gateway) â€” returns what a gateway would hand the browser.
   simulate(orderId, outcome) {
     if (!this.orders.has(orderId)) throw new Error('unknown sandbox order');
     const paymentId = 'pay_sbx_' + randomBytes(9).toString('hex');
@@ -79,7 +79,24 @@ export class SandboxGateway {
   parseWebhook(body) { return new RazorpayGateway({}).parseWebhook(body); }
 }
 
+
+// Disabled gateway: safe for public demos where no payment provider is configured.
+export class DisabledGateway {
+  get name() { return 'disabled'; }
+  get configured() { return false; }
+  get isSandbox() { return false; }
+  get disabled() { return true; }
+  async createOrder() { throw new Error('Payments are disabled.'); }
+  verifyCheckoutSignature() { return false; }
+  async confirmPayment() { return { ok: false, reason: 'Payments are disabled.' }; }
+  verifyWebhook() { return false; }
+  parseWebhook() {
+    return { eventId: 'disabled', event: 'disabled', orderId: null, paymentId: null,
+      amountPaise: null, paid: false, failed: false };
+  }
+}
 export function createGateway(cfg) {
+  if (cfg.provider === 'disabled') return new DisabledGateway();
   if (cfg.provider === 'razorpay') return new RazorpayGateway({ keyId: cfg.razorpayKeyId, keySecret: cfg.razorpayKeySecret, webhookSecret: cfg.razorpayWebhookSecret });
   if (cfg.provider === 'sandbox') return new SandboxGateway({ secret: cfg.sandboxSecret });
   throw new Error(`Unknown payment provider ${cfg.provider}`);

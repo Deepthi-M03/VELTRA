@@ -1,5 +1,5 @@
-// Subscriptions & payments. ₹50 per day per category. Entitlements are computed from the
-// subscriptions table only — never from client state.
+// Subscriptions & payments. â‚¹50 per day per category. Entitlements are computed from the
+// subscriptions table only â€” never from client state.
 import { CATEGORY_IDS, CATEGORIES, PRICE_PER_DAY_PAISE, MAX_SUBSCRIPTION_DAYS } from '../../../../packages/shared/constants.js';
 
 export function quote(items) {
@@ -8,7 +8,7 @@ export function quote(items) {
     if (!CATEGORY_IDS.includes(category)) throw new Error(`Unknown category ${category}`);
     if (seen.has(category)) throw new Error(`Duplicate category ${category}`);
     seen.add(category);
-    if (!Number.isInteger(days) || days < 1 || days > MAX_SUBSCRIPTION_DAYS) throw new Error(`days must be 1–${MAX_SUBSCRIPTION_DAYS}`);
+    if (!Number.isInteger(days) || days < 1 || days > MAX_SUBSCRIPTION_DAYS) throw new Error(`days must be 1â€“${MAX_SUBSCRIPTION_DAYS}`);
     return { category, days, name: CATEGORIES.find((c) => c.id === category).name, amountPaise: days * PRICE_PER_DAY_PAISE };
   });
   return { lines, totalPaise: lines.reduce((a, l) => a + l.amountPaise, 0), pricePerDayPaise: PRICE_PER_DAY_PAISE };
@@ -52,6 +52,7 @@ export class SubscriptionService {
   }
 
   checkoutAllowed() {
+    if (this.gateway.disabled) return { ok: false, reason: 'Payments are not configured for this demo.' };
     if (this.gateway.isSandbox) return { ok: true };
     if (!this.flags.get('live_payments')) return { ok: false, reason: 'Live payments are disabled by the administrator.' };
     if (!this.flags.get('paid_recommendations')) return { ok: false, reason: 'Paid intelligence is not yet available: regulatory registration is pending.' };
@@ -85,6 +86,7 @@ export class SubscriptionService {
   }
 
   async verifyCheckout(user, { orderId, paymentId, signature }) {
+    if (this.gateway.disabled) return { error: 'Payments are disabled.' };
     const p = this.db.get('SELECT * FROM payments WHERE provider_order_id = ? AND user_id = ?', orderId, user.id);
     if (!p) return { error: 'Order not found.' };
     if (p.status === 'paid') return { ok: true, payment: p, already: true };
@@ -100,7 +102,7 @@ export class SubscriptionService {
     }
     const r = this.#markPaid(p, paymentId, 'signature');
     this.audit.log(user.id, 'payment.paid', `payment:${p.id}`, { via: 'signature' });
-    if (!r.already) this.notifier.notify(user.id, 'payment', 'Payment confirmed', `Receipt ${r.payment.receipt_no} — ₹${(p.amount_paise / 100).toFixed(2)}. Your subscriptions are active.`, '/app/subscription');
+    if (!r.already) this.notifier.notify(user.id, 'payment', 'Payment confirmed', `Receipt ${r.payment.receipt_no} â€” â‚¹${(p.amount_paise / 100).toFixed(2)}. Your subscriptions are active.`, '/app/subscription');
     return { ok: true, payment: r.payment, grants: r.grants };
   }
 
@@ -113,6 +115,7 @@ export class SubscriptionService {
 
   // Webhook: authenticated by HMAC over the raw body; idempotent on event id.
   handleWebhook(rawBody, signature) {
+    if (this.gateway.disabled) return { status: 404 };
     const valid = this.gateway.verifyWebhook(rawBody, signature || '');
     let body; try { body = JSON.parse(rawBody); } catch { return { status: 400 }; }
     const ev = this.gateway.parseWebhook(body);
