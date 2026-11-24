@@ -1,51 +1,69 @@
 # VELTRA — Intelligence Beyond the Market
 
+**[🌐 Visit VELTRA — Live Website](https://veltra-2cpz.onrender.com)**
+
 VELTRA is a financial-intelligence platform for Indian markets: NSE equities, F&O, MCX commodities and currency derivatives. It shows market structure, generates rule-based trade setups from validated data, explains them with a guard-railed AI narrative, and keeps an honest record of every setup, losses included.
 
+**Live Demo:** https://veltra-2cpz.onrender.com
+
 **Design identity:** Crimson Dynasty (obsidian, burgundy, royal crimson, rose gold).
-
-## Quick start (Windows PowerShell)
-
-You need **Node.js 22.13 or newer**. There's nothing else to install: VELTRA has **zero npm dependencies**.
-
-```powershell
-cd C:\Users\<you>\veltra
-Copy-Item .env.example .env
-npm run migrate
-npm run create-admin -- you@example.com "Your Name"
-npm start
-```
-
-Open http://localhost:4000. The full guide is in [SETUP.md](SETUP.md).
 
 ## What's inside
 
 | Path | Purpose |
 |---|---|
-| `apps/server` | HTTP API, auth, sessions, routes, background jobs (Node built-ins only) |
-| `apps/web/public` | Public website + trading terminal (ES modules, no build step) |
-| `packages/database` | SQLite access (`node:sqlite`) + versioned SQL migrations |
-| `packages/market-engine` | Session calendar, provider interface, validation, indicators, option math, recommendation engine |
-| `packages/ai-engine` | Findings/narrative separation, numeric guardrail, Anthropic provider |
-| `packages/payments` | Gateway abstraction: Razorpay + sandbox |
+| `apps/server` | HTTP API, authentication, sessions, routes and background jobs |
+| `apps/web/public` | Public website and trading terminal |
+| `packages/database` | SQLite access and versioned SQL migrations |
+| `packages/market-engine` | Market sessions, data validation, indicators, option mathematics and recommendation engine |
+| `packages/ai-engine` | Findings/narrative separation, numeric guardrails and AI provider |
+| `packages/payments` | Payment gateway abstraction: disabled, Razorpay and sandbox modes |
 | `packages/shared` | Constants shared by server and browser |
-| `apps/android` | Native Kotlin Android app (Android Studio project) |
+| `apps/android` | Native Kotlin Android application |
 | `tests` | Unit, API integration and end-to-end browser tests |
 
-## Key commands
+## Key capabilities
 
-| Command | What it does |
-|---|---|
-| `npm start` | Run the server |
-| `npm run dev` | Run with auto-restart on file changes |
-| `npm run migrate` | Apply database migrations (safe to repeat) |
-| `npm run create-admin -- email "Name"` | Create or promote an administrator |
-| `npm run backup-db` | Consistent online backup to `data/backups/` |
-| `npm test` | Unit + API tests |
-| `npm run test:e2e` | Browser journeys (needs Playwright) |
+- Indian market intelligence across NSE equities, indices, F&O, MCX and currency derivatives.
+- Market overview, instruments, watchlists and trading dashboards.
+- Rule-based trade setups and technical analysis.
+- Options and futures intelligence.
+- AI-assisted trade explanations with numeric guardrails.
+- Trade journal and paper-trading capabilities.
+- User authentication and administrator controls.
+- Subscription and payment gateway architecture.
 
-## Honest status
+## Deployment status
 
-All 12 stages are implemented. DEMO market data, the sandbox gateway and the deterministic AI work out of the box. Live NSE/MCX data, real payments, Google sign-in, email delivery, Android push and Claude narratives each need credentials or licences. Selling recommendations to the public needs SEBI registration. The Android project couldn't be compiled in the build environment, so its first build happens in your Android Studio. See [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md).
+<badge color="success">Live on Render</badge>
 
-Docs: [SETUP](SETUP.md) · [ENVIRONMENT](ENVIRONMENT.md) · [DEPLOYMENT](DEPLOYMENT.md) · [API](API_DOCUMENTATION.md) · [DATABASE](DATABASE.md) · [TEST_REPORT](TEST_REPORT.md) · [CHANGELOG](CHANGELOG.md)
+**Website:** [https://veltra-2cpz.onrender.com](https://veltra-2cpz.onrender.com)
+
+The current public demo uses:
+
+- **Market data:** DEMO synthetic prices, clearly labelled in the interface.
+- **Payments:** Disabled.
+- **AI:** Deterministic provider.
+- **Database:** In-memory SQLite; data resets when the service restarts.
+- **Hosting:** Render free instance; it may spin down after inactivity.
+
+This deployment is a demonstration, not yet a persistent commercial production service.
+
+## Honest project status
+
+All 12 development stages are implemented. Live NSE/MCX data, real payments, Google sign-in, email delivery, Android push and Claude narratives require the relevant credentials, integrations or licences.
+
+Commercial distribution of market data and public investment recommendations may require appropriate licensing and regulatory compliance, including SEBI requirements.
+
+The Android project has not yet been compiled in the build environment; its first build and testing need to be completed in Android Studio.
+
+See [PRODUCTION_READINESS.md](https://github.com/Deepthi-M03/VELTRA/blob/master/PRODUCTION_READINESS.md).
+
+## Documentation
+
+- [Environment Configuration](https://github.com/Deepthi-M03/VELTRA/blob/master/ENVIRONMENT.md)
+- [Deployment Guide](https://github.com/Deepthi-M03/VELTRA/blob/master/DEPLOYMENT.md)
+- [API Documentation](https://github.com/Deepthi-M03/VELTRA/blob/master/API_DOCUMENTATION.md)
+- [Database Documentation](https://github.com/Deepthi-M03/VELTRA/blob/master/DATABASE.md)
+- [Test Report](https://github.com/Deepthi-M03/VELTRA/blob/master/TEST_REPORT.md)
+- [Changelog](https://github.com/Deepthi-M03/VELTRA/blob/master/CHANGELOG.md)
